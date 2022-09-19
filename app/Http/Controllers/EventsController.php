@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Workshop;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -16,10 +17,25 @@ class EventsController extends BaseController
         // $events = DB::table('events')
         //         ->get();
         $events = Event::all();
+        $data2 = [];
+        foreach ($events as $event)
+        {
+            $findEventWorkShpos = DB::table('workshops')->where('event_id',$event->id)->all();
+
+            $newArra = (
+                "id" => $event->id,
+                "name"=> $event->name,
+                "created_at" => $event->created_at,
+                "updated_at"=> $event->updated_at,
+                "workshops"=> $findEventWorkShpos,
+        )
+
+           $data2.push($newArra);
+        }
 
         return response()->json([
             "success" => true,
-            'data' => $events], 200);
+            'data' => $data2], 200);
     }
 
     /*
