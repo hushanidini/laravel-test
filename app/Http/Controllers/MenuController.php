@@ -93,7 +93,40 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+  public  function buildTree(array $flatList)
+    {
+        $grouped = [];
+        foreach ($flatList as $node){
+            $grouped[$node['parent_id']][] = $node;
+        }
+    
+        $fnBuilder = function($siblings) use (&$fnBuilder, $grouped) {
+            foreach ($siblings as $k => $sibling) {
+                $id = $sibling['id'];
+                if(isset($grouped[$id])) {
+                    $sibling['children'] = $fnBuilder($grouped[$id]);
+                }
+                $siblings[$k] = $sibling;
+            }
+            return $siblings;
+        };
+    
+        return $fnBuilder($grouped[0]);
     }
+
+    public function getMenuItems() {
+        // throw new \Exception('implement in coding task 3');
+        $MenuItems = MenuItem::all();
+      
+        $tree = $this->buildTree($MenuItems, 'parent_id', 'id');
+        return response()->json([
+            "success" => true,
+            'data' => $tree], 200); 
+
+    }
+
+    // public function testMenu(){
+    //     $MenuItem = MenuItem::groupBy('parent_id')-> get();
+    //     dd($MenuItem);
+    // }
 }
