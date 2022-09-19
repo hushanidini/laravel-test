@@ -37,7 +37,39 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('cinemas', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->boolean('is_watch');
+            $table->dateTime('start');
+            $table->dateTime('end');
+            $table->decimal('price', 5, 2);
+            $table->integer('available_seat_type_id')->unsigned();
+            $table->foreign('available_seat_type_id')->references('id')->on('seat_types');
+            $table->timestamps();
+        });
+
+        Schema::create('seat_types', function($table) {
+            $table->increments('id');
+            $table->string('type');
+            $table->boolean('available')->default(true);;
+            $table->timestamps();
+        });
+
+        Schema::create('booking', function($table) {
+            $table->increments('id');
+            $table->dateTime('booking_time');
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('cinema_id')->unsigned()->nullable();
+            $table->foreign('cinema_id')->references('id')->on('cinemas')->onDelete('cascade');
+            $table->boolean('available')->default(true);
+            $table->string('seat_type_id');
+
+            $table->timestamps();
+        });
+
+
     }
 
     /**
@@ -47,5 +79,8 @@ class CreateCinemaSchema extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('cinemas');
+        Schema::dropIfExists('seat_types');
+        Schema::dropIfExists('booking');
     }
 }
