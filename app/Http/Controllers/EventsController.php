@@ -17,20 +17,17 @@ class EventsController extends BaseController
         // $events = DB::table('events')
         //         ->get();
         $events = Event::all();
-        $data2 = [];
+        $data2 = array();
         foreach ($events as $event)
         {
-            $findEventWorkShpos = DB::table('workshops')->where('event_id',$event->id)->all();
-
-            $newArra = (
-                "id" => $event->id,
-                "name"=> $event->name,
-                "created_at" => $event->created_at,
-                "updated_at"=> $event->updated_at,
-                "workshops"=> $findEventWorkShpos,
-        )
-
-           $data2.push($newArra);
+            //$findEventWorkShpos = DB::table('workshops')->select('*')->where('event_id',$event->id)->get();
+            $findEventWorkShpos = Workshop::where('event_id',$event->id)->get();
+            
+            $data2['id'] = $event->id;
+            $data2['name'] = $event->name;
+            $data2['created_at'] = $event->created_at;
+            $data2['updated_at'] = $event->updated_at;
+            $data2['workshops'] = $findEventWorkShpos;
         }
 
         return response()->json([
