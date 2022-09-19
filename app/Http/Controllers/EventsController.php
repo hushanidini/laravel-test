@@ -8,11 +8,18 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Date;
+use DB;
 
 class EventsController extends BaseController
 {
     public function getWarmupEvents() {
-        return Event::all();
+        // $events = DB::table('events')
+        //         ->get();
+        $events = Event::all();
+
+        return response()->json([
+            "success" => true,
+            'data' => $events], 200);
     }
 
     /*
